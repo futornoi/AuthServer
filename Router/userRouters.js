@@ -6,7 +6,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const router = Router();
 
 router.get('/users/:id?', userController.getUserList);
-router.post('/users', roleMiddleware);
+router.post('/users', roleMiddleware(['ADMIN']));
+router.delete('/users/:id', roleMiddleware(['ADMIN']), userController.deleteUser);
 
 router.post('/authUser', authMiddleware, userController.getAuthUser);
 

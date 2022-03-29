@@ -20,6 +20,16 @@ const userControllers = {
       console.log(e)
       res.status(400).send({msg: 'Some error'})
     }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const {id} = req.params;
+      const deletedUser = await User.findByIdAndDelete(id);
+      res.send({msg: `${deletedUser._id} was deleted`});
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({msg: 'Some error'});
+    }
   }
 }
 
