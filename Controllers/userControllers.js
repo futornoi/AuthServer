@@ -1,5 +1,9 @@
 const User = require('../Schemas/userSchema');
 const jwt = require("jsonwebtoken");
+const authError = require("../Constants");
+const Role = require("../Schemas/roleSchema");
+const {validationResult} = require("express-validator");
+const {omit} = require("../Helpers/objectActions");
 
 const userControllers = {
   getAuthUser: async (req, res) => {
@@ -9,12 +13,15 @@ const userControllers = {
       const authUser = await User.findById(id, {password: 0});
       res.send(authUser);
     } catch (e) {
-      res.status(400).send({msg: 'Some error'})
+      res.status(400).send({msg: authError.SOME})
     }
   },
   getUserList: async (req, res) => {
     try {
-      const usersList = await User.find({}, {password: 0});
+      const {id} = req.params;
+      const filterOptions = !!id ? {_id: id} : {}
+
+      const usersList = await User.find(filterOptions, {password: 0});
       res.send(usersList);
     } catch (e) {
       console.log(e)
@@ -28,8 +35,31 @@ const userControllers = {
       res.send({msg: `${deletedUser._id} was deleted`});
     } catch (e) {
       console.log(e);
-      res.status(400).send({msg: 'Some error'});
+      res.status(400).send({msg: authError.SOME});
     }
+  },
+  updateUser: async (req, res) => {
+   try  {
+     const {name, email, roles} = req.body;
+     const {id} = req.params;
+
+     const errors = validationResult(req);
+     if(!errors.isEmpty()) return res.send(errors);
+
+     const role = await Role.findOne({value: roles});
+     const candidate = await User.findByIdAndUpdate(id,
+       {name, email, roles: [role.value]},
+       {returnDocument: "after", projection: {password: 0}});
+     if(!candidate) {
+       return res.status(404).send({msg: "User not found"})
+     }
+
+     res.send(candidate);
+   } catch (e) {
+     console.log(e)
+     res.status(404).send({msg: authError.SOME})
+   }
+
   }
 }
 

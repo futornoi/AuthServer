@@ -1,19 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRouter = require('./Router/authRouters');
+const rolesRouter = require('./Router/rolesRouters');
 const userRouter = require('./Router/userRouters');
 require('dotenv').config();
-const cors = require("cors");
 
 const {PORT = 3000, DB_URL = '', API_URL} = process.env;
 const app = express();
 
-//CORS
-app.use(cors());
-//JSON_PARSE
+app.use(require("morgan")('dev'));
+app.use(require("cors")());
 app.use(express.json());
 //AUTH
 app.use('/auth', authRouter);
+//ENUMS
+app.use('/enums', rolesRouter);
 //USER
 app.use(userRouter);
 
