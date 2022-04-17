@@ -5,7 +5,7 @@ const rolesRouter = require('./Router/rolesRouters');
 const userRouter = require('./Router/userRouters');
 require('dotenv').config();
 
-const {PORT = 3000, DB_URL = '', API_URL} = process.env;
+const {PORT = 3000, DB_URL = ''} = process.env;
 const app = express();
 
 app.use(require("morgan")('dev'));
