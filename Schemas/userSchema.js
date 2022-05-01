@@ -16,6 +16,10 @@ const UserSchema = new Schema({
     required: true,
     min: 8,
   },
+  imgSrc: {
+    type: String,
+    default: '',
+  },
   roles: [{type: String, ref: 'Role'}]
 }, {
   versionKey: false,

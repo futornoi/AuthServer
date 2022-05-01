@@ -8,10 +8,10 @@ module.exports = (rolesArray) => (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     if (!token) return res.status(400).json({msg: authError.NOT_AUTHORISATION});
 
-    const {roles} = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.user = jwt.verify(token, process.env.TOKEN_SECRET);
 
     let hasRole = false;
-    roles.forEach(role => {
+    req.user.roles.forEach(role => {
       if (rolesArray.includes(role)) hasRole = true
     })
 
